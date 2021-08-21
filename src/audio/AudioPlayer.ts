@@ -138,6 +138,11 @@ export type AudioPlayerState =
 	| AudioPlayerPlayingState
 	| AudioPlayerPausedState;
 
+/**
+ * States which have a ready resource and are thus considered playable.
+ */
+export type AudioPlayerPlayableState = Extract<AudioPlayerState, AudioPlayerPlayingState | AudioPlayerPausedState>;
+
 export type AudioPlayerEvents = {
 	error: (error: AudioPlayerError) => Awaited<void>;
 	debug: (message: string) => Awaited<void>;
@@ -458,7 +463,7 @@ export class AudioPlayer extends TypedEmitter<AudioPlayerEvents> {
 	 *
 	 * @returns true if the resource is playable, false otherwise.
 	 */
-	public checkPlayable() {
+	public checkPlayable(): this is AudioPlayerPlayableState {
 		const state = this._state;
 		if (state.status === AudioPlayerStatus.Idle || state.status === AudioPlayerStatus.Buffering) return false;
 
